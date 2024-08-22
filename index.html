@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Quote Machine</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Quote Machine</h1>
+        <div class="input-section">
+            <input type="text" id="name" placeholder="Your Name">
+            <select id="topic">
+                <option value="">Select a Topic</option>
+                <option value="inspiration">Inspiration</option>
+                <option value="love">Love</option>
+                <option value="success">Success</option>
+            </select>
+            <select id="mood">
+                <option value="">Select Your Mood</option>
+                <option value="happy">Happy</option>
+                <option value="reflective">Reflective</option>
+                <option value="motivated">Motivated</option>
+            </select>
+            <button id="generate-quote">Generate Quote</button>
+        </div>
+        <div class="quote-display">
+            <p id="quote-text"></p>
+            <p id="quote-author"></p>
+        </div>
+        <div class="actions">
+            <button id="save-quote">Save Quote</button>
+            <button id="share-quote">Share Quote</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
