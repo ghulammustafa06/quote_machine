@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveQuoteBtn = document.getElementById('save-quote');
     const shareQuoteBtn = document.getElementById('share-quote');
     const copyQuoteBtn = document.getElementById('copy-quote');
-    const quoteDisplay = document.querySelector('.quote-display');
     const favoritesList = document.getElementById('favorites-list');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const dailyQuote = document.getElementById('daily-quote');
@@ -22,9 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveProfileBtn = document.getElementById('save-profile');
     const profileName = document.getElementById('profile-name');
     const profileEmail = document.getElementById('profile-email');
+    let quoteDisplay = document.querySelector('.quote-display');
 
+    if (!quoteDisplay) {
+        quoteDisplay = document.createElement('div');
+        quoteDisplay.className = 'quote-display';
+        document.querySelector('.container').appendChild(quoteDisplay);
+    }
     const quotes = {
-
         inspiration: [
             { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
             { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
@@ -49,14 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
             { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson" },
             { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" }
         ]
-        };
+    };
 
     const themes = [
         { name: 'default', backgroundColor: '#f0f0f0', textColor: '#333' },
         { name: 'dark', backgroundColor: '#2c3e50', textColor: '#ecf0f1' },
-        { name: 'nature', backgroundColor: '#27ae60', textColor: '#ffffff' }
     ];
-
 
     let currentQuote = {};
     let currentCategory = 'all';
@@ -77,23 +79,23 @@ document.addEventListener('DOMContentLoaded', () => {
         let personalizedQuote = randomQuote.text.replace(/you/g, name);
         personalizedQuote = `In your ${mood} mood, remember: ${personalizedQuote}`;
         
-        quoteText.textContent = `"${personalizedQuote}"`;
-        quoteAuthor.textContent = `- ${randomQuote.author}`;
-
         currentQuote = { text: personalizedQuote, author: randomQuote.author };
+
+        if (quoteText && quoteAuthor) {
+            quoteText.textContent = `"${personalizedQuote}"`;
+            quoteAuthor.textContent = `- ${randomQuote.author}`;
+        }
+
+        quoteDisplay.innerHTML = `
+            <p class="quote-text">"${personalizedQuote}"</p>
+            <p class="quote-author">- ${randomQuote.author}</p>
+        `;
 
         applyRandomTheme();
 
-        quoteDisplay.classList.remove('quote-animation');
+        quoteDisplay.classList.remove('quote-animation', 'fade-in');
         void quoteDisplay.offsetWidth; 
-        quoteDisplay.classList.add('quote-animation');
-
-        quoteDisplay.classList.remove('fade-in');
-        void quoteDisplay.offsetWidth; 
-        quoteDisplay.classList.add('fade-in');
-
-        updateRatingStars(0);
-    
+        quoteDisplay.classList.add('quote-animation', 'fade-in');
     }
 
     function saveQuote() {
@@ -139,12 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
         savedQuotes.forEach((quote, index) => {
             const li = document.createElement('li');
             li.textContent = `"${quote.text}" - ${quote.author}`;
+            li.classList.add('slide-in');
             favoritesList.appendChild(li);
         });
-
-        const newItems = favoritesList.querySelectorAll('li');
-        newItems.forEach(item => item.classList.add('slide-in'));
-
     }
 
     function applyRandomTheme() {
@@ -184,28 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    generateQuoteBtn.addEventListener('click', generateQuote);
-    saveQuoteBtn.addEventListener('click', saveQuote);
-    shareQuoteBtn.addEventListener('click', shareQuote);
-    copyQuoteBtn.addEventListener('click', copyQuote);
-    darkModeToggle.addEventListener('click', toggleDarkMode);
-
-    ratingStars.forEach(star => {
-        star.addEventListener('click', () => {
-            const rating = parseInt(star.getAttribute('data-rating'));
-            updateRatingStars(rating);
-        });
-    });
-
-    setDailyQuote();
-    updateFavoritesList();
-
-    generateQuoteBtn.addEventListener('click', generateQuote);
-    saveQuoteBtn.addEventListener('click', saveQuote);
-    shareQuoteBtn.addEventListener('click', shareQuote);
-    copyQuoteBtn.addEventListener('click', copyQuote);
-
-function searchQuotes(query) {
+    function searchQuotes(query) {
         const results = Object.values(quotes).flat().filter(quote => 
             quote.text.toLowerCase().includes(query.toLowerCase()) ||
             quote.author.toLowerCase().includes(query.toLowerCase())
@@ -271,20 +249,11 @@ function searchQuotes(query) {
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => filterByCategory(btn.getAttribute('data-category')));
     });
-    profileBtn.addEventListener('click', openProfileModal);
-    closeModal.addEventListener('click', closeProfileModal);
-    saveProfileBtn.addEventListener('click', saveProfile);
-
-    ratingStars.forEach(star => {
-        star.addEventListener('click', () => {
-            const rating = parseInt(star.getAttribute('data-rating'));
-            updateRatingStars(rating);
-        });
-    });
+    if (profileBtn) profileBtn.addEventListener('click', openProfileModal);
+    if (closeModal) closeModal.addEventListener('click', closeProfileModal);
+    if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveProfile);
 
     setDailyQuote();
     updateFavoritesList();
     filterByCategory('all');
-
-    updateFavoritesList();
-});   
+});
