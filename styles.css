@@ -74,3 +74,8 @@ button {
     margin: 0.5rem;
 }
 
+button:hover {
+    background-color: #5652d9;
+    transform: translateY(-2px);
+}
+
