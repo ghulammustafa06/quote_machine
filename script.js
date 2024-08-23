@@ -13,7 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const dailyQuote = document.getElementById('daily-quote');
     const dailyAuthor = document.getElementById('daily-author');
-    const ratingStars = document.querySelectorAll('.rating i');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const profileBtn = document.getElementById('profile-btn');
+    const profileModal = document.getElementById('profile-modal');
+    const closeModal = document.querySelector('.close');
+    const saveProfileBtn = document.getElementById('save-profile');
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
 
     const quotes = {
 
@@ -42,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let currentQuote = {};
+    let currentCategory = 'all';
 
     function generateQuote() {
         const name = nameInput.value.trim();
@@ -64,13 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQuote = { text: personalizedQuote, author: randomQuote.author };
 
-        // Apply a random theme
         applyRandomTheme();
 
-        // Add animation
         quoteDisplay.classList.remove('quote-animation');
-        void quoteDisplay.offsetWidth; // Trigger reflow
+        void quoteDisplay.offsetWidth; 
         quoteDisplay.classList.add('quote-animation');
+
+        quoteDisplay.classList.remove('fade-in');
+        void quoteDisplay.offsetWidth; 
+        quoteDisplay.classList.add('fade-in');
 
         updateRatingStars(0);
     
@@ -121,6 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
             li.textContent = `"${quote.text}" - ${quote.author}`;
             favoritesList.appendChild(li);
         });
+
+        const newItems = favoritesList.querySelectorAll('li');
+        newItems.forEach(item => item.classList.add('slide-in'));
+
     }
 
     function applyRandomTheme() {
@@ -180,6 +195,65 @@ document.addEventListener('DOMContentLoaded', () => {
     saveQuoteBtn.addEventListener('click', saveQuote);
     shareQuoteBtn.addEventListener('click', shareQuote);
     copyQuoteBtn.addEventListener('click', copyQuote);
+
+function searchQuotes(query) {
+        const results = Object.values(quotes).flat().filter(quote => 
+            quote.text.toLowerCase().includes(query.toLowerCase()) ||
+            quote.author.toLowerCase().includes(query.toLowerCase())
+        );
+        displaySearchResults(results);
+    }
+
+    function displaySearchResults(results) {
+        quoteDisplay.innerHTML = '';
+        results.forEach(quote => {
+            const quoteElement = document.createElement('div');
+            quoteElement.classList.add('search-result', 'fade-in');
+            quoteElement.innerHTML = `
+                <p>"${quote.text}"</p>
+                <p>- ${quote.author}</p>
+            `;
+            quoteDisplay.appendChild(quoteElement);
+        });
+    }
+
+    function filterByCategory(category) {
+        currentCategory = category;
+        categoryBtns.forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+        if (category === 'all') {
+            displaySearchResults(Object.values(quotes).flat());
+        } else {
+            displaySearchResults(quotes[category]);
+        }
+    }
+
+    function openProfileModal() {
+        profileModal.style.display = 'block';
+        const storedName = localStorage.getItem('userName');
+        const storedEmail = localStorage.getItem('userEmail');
+        if (storedName) profileName.value = storedName;
+        if (storedEmail) profileEmail.value = storedEmail;
+    }
+
+    function closeProfileModal() {
+        profileModal.style.display = 'none';
+    }
+
+    function saveProfile() {
+        const name = profileName.value.trim();
+        const email = profileEmail.value.trim();
+        if (name) localStorage.setItem('userName', name);
+        if (email) localStorage.setItem('userEmail', email);
+        closeProfileModal();
+        alert('Profile saved successfully!');
+    }
+
+    
+    setDailyQuote();
+    updateFavoritesList();
+    filterByCategory('all');
 
     updateFavoritesList();
 });   
