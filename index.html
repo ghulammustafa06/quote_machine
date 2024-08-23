@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quote Machine</title>
+    <title>Personalized Quote Machine</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Quote Machine</h1>
+        <h1>Personalized Quote Machine</h1>
         <div class="input-section">
             <input type="text" id="name" placeholder="Your Name">
             <select id="topic">
@@ -33,9 +33,13 @@
         <div class="actions">
             <button id="save-quote">Save Quote</button>
             <button id="share-quote">Share on Twitter</button>
+            <button id="copy-quote">Copy Quote</button>
+        </div>
+        <div class="favorites-section">
+            <h2>Favorite Quotes</h2>
+            <ul id="favorites-list"></ul>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
-

@@ -7,9 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const moodSelect = document.getElementById('mood');
     const saveQuoteBtn = document.getElementById('save-quote');
     const shareQuoteBtn = document.getElementById('share-quote');
+    const copyQuoteBtn = document.getElementById('copy-quote');
     const quoteDisplay = document.querySelector('.quote-display');
-
+    const favoritesList = document.getElementById('favorites-list');
     const quotes = {
+
         inspiration: [
             { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
             { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
@@ -49,12 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomQuote = topicQuotes[Math.floor(Math.random() * topicQuotes.length)];
 
         let personalizedQuote = randomQuote.text.replace(/you/g, name);
+        personalizedQuote = `In your ${mood} mood, remember: ${personalizedQuote}`;
+        
         quoteText.textContent = `"${personalizedQuote}"`;
         quoteAuthor.textContent = `- ${randomQuote.author}`;
 
         currentQuote = { text: personalizedQuote, author: randomQuote.author };
 
         applyRandomTheme();
+
+        quoteDisplay.classList.remove('quote-animation');
+        void quoteDisplay.offsetWidth; 
+        quoteDisplay.classList.add('quote-animation');
     }
 
     function saveQuote() {
@@ -67,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         savedQuotes.push(currentQuote);
         localStorage.setItem('savedQuotes', JSON.stringify(savedQuotes));
         alert('Quote saved successfully!');
+        updateFavoritesList();
     }
 
     function shareQuote() {
@@ -77,6 +86,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const twitterUrl = `https://twitter.com/intent/tweet?text="${encodeURIComponent(currentQuote.text)}" - ${encodeURIComponent(currentQuote.author)}`;
         window.open(twitterUrl, '_blank');
+    }
+
+    function copyQuote() {
+        if (!currentQuote.text) {
+            alert('Please generate a quote first');
+            return;
+        }
+
+        const quoteString = `"${currentQuote.text}" - ${currentQuote.author}`;
+        navigator.clipboard.writeText(quoteString).then(() => {
+            alert('Quote copied to clipboard!');
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+
+    function updateFavoritesList() {
+        const savedQuotes = JSON.parse(localStorage.getItem('savedQuotes')) || [];
+        favoritesList.innerHTML = '';
+        savedQuotes.forEach((quote, index) => {
+            const li = document.createElement('li');
+            li.textContent = `"${quote.text}" - ${quote.author}`;
+            favoritesList.appendChild(li);
+        });
     }
 
     function applyRandomTheme() {
@@ -90,4 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     generateQuoteBtn.addEventListener('click', generateQuote);
     saveQuoteBtn.addEventListener('click', saveQuote);
     shareQuoteBtn.addEventListener('click', shareQuote);
-});
+    copyQuoteBtn.addEventListener('click', copyQuote);
+
+    updateFavoritesList();
+});   
