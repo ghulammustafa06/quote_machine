@@ -28,19 +28,28 @@ document.addEventListener('DOMContentLoaded', () => {
         inspiration: [
             { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
             { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" }
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+            { text: "Act as if what you do makes a difference. It does.", author: "William James" },
+            { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" }
         ],
         love: [
             { text: "Love all, trust a few, do wrong to none.", author: "William Shakespeare" },
             { text: "The greatest happiness of life is the conviction that we are loved.", author: "Victor Hugo" },
-            { text: "To love and be loved is to feel the sun from both sides.", author: "David Viscott" }
+            { text: "To love and be loved is to feel the sun from both sides.", author: "David Viscott" },
+            { text: "Love is composed of a single soul inhabiting two bodies.", author: "Aristotle" },
+            { text: "Where there is love there is life.", author: "Mahatma Gandhi" },
+            { text: "Love recognizes no barriers. It jumps hurdles, leaps fences, penetrates walls to arrive at its destination full of hope.", author: "Maya Angelou" }
         ],
         success: [
             { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
             { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon" },
-            { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett" }
+            { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett" },
+            { text: "Don't be afraid to give up the good to go for the great.", author: "John D. Rockefeller" },
+            { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson" },
+            { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" }
         ]
-    };
+        };
 
     const themes = [
         { name: 'default', backgroundColor: '#f0f0f0', textColor: '#333' },
@@ -250,7 +259,29 @@ function searchQuotes(query) {
         alert('Profile saved successfully!');
     }
 
-    
+    generateQuoteBtn.addEventListener('click', generateQuote);
+    saveQuoteBtn.addEventListener('click', saveQuote);
+    shareQuoteBtn.addEventListener('click', shareQuote);
+    copyQuoteBtn.addEventListener('click', copyQuote);
+    darkModeToggle.addEventListener('click', toggleDarkMode);
+    searchBtn.addEventListener('click', () => searchQuotes(searchInput.value));
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') searchQuotes(searchInput.value);
+    });
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => filterByCategory(btn.getAttribute('data-category')));
+    });
+    profileBtn.addEventListener('click', openProfileModal);
+    closeModal.addEventListener('click', closeProfileModal);
+    saveProfileBtn.addEventListener('click', saveProfile);
+
+    ratingStars.forEach(star => {
+        star.addEventListener('click', () => {
+            const rating = parseInt(star.getAttribute('data-rating'));
+            updateRatingStars(rating);
+        });
+    });
+
     setDailyQuote();
     updateFavoritesList();
     filterByCategory('all');
