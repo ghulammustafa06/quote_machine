@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyQuoteBtn = document.getElementById('copy-quote');
     const quoteDisplay = document.querySelector('.quote-display');
     const favoritesList = document.getElementById('favorites-list');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const dailyQuote = document.getElementById('daily-quote');
+    const dailyAuthor = document.getElementById('daily-author');
+    const ratingStars = document.querySelectorAll('.rating i');
+
     const quotes = {
 
         inspiration: [
@@ -35,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'nature', backgroundColor: '#27ae60', textColor: '#ffffff' }
     ];
 
+
     let currentQuote = {};
 
     function generateQuote() {
@@ -58,11 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQuote = { text: personalizedQuote, author: randomQuote.author };
 
+        // Apply a random theme
         applyRandomTheme();
 
+        // Add animation
         quoteDisplay.classList.remove('quote-animation');
-        void quoteDisplay.offsetWidth; 
+        void quoteDisplay.offsetWidth; // Trigger reflow
         quoteDisplay.classList.add('quote-animation');
+
+        updateRatingStars(0);
+    
     }
 
     function saveQuote() {
@@ -119,6 +130,51 @@ document.addEventListener('DOMContentLoaded', () => {
         quoteDisplay.style.backgroundColor = randomTheme.name === 'default' ? '#f9f9f9' : randomTheme.backgroundColor;
         quoteDisplay.style.color = randomTheme.textColor;
     }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const icon = darkModeToggle.querySelector('i');
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
+    }
+
+    function setDailyQuote() {
+        const today = new Date().toDateString();
+        const storedDate = localStorage.getItem('dailyQuoteDate');
+
+        if (today !== storedDate) {
+            const topics = Object.keys(quotes);
+            const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+            const topicQuotes = quotes[randomTopic];
+            const randomQuote = topicQuotes[Math.floor(Math.random() * topicQuotes.length)];
+
+            dailyQuote.textContent = `"${randomQuote.text}"`;
+            dailyAuthor.textContent = `- ${randomQuote.author}`;
+
+            localStorage.setItem('dailyQuoteDate', today);
+            localStorage.setItem('dailyQuoteText', randomQuote.text);
+            localStorage.setItem('dailyQuoteAuthor', randomQuote.author);
+        } else {
+            dailyQuote.textContent = `"${localStorage.getItem('dailyQuoteText')}"`;
+            dailyAuthor.textContent = `- ${localStorage.getItem('dailyQuoteAuthor')}`;
+        }
+    }
+
+    generateQuoteBtn.addEventListener('click', generateQuote);
+    saveQuoteBtn.addEventListener('click', saveQuote);
+    shareQuoteBtn.addEventListener('click', shareQuote);
+    copyQuoteBtn.addEventListener('click', copyQuote);
+    darkModeToggle.addEventListener('click', toggleDarkMode);
+
+    ratingStars.forEach(star => {
+        star.addEventListener('click', () => {
+            const rating = parseInt(star.getAttribute('data-rating'));
+            updateRatingStars(rating);
+        });
+    });
+
+    setDailyQuote();
+    updateFavoritesList();
 
     generateQuoteBtn.addEventListener('click', generateQuote);
     saveQuoteBtn.addEventListener('click', saveQuote);
